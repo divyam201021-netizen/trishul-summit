@@ -15,3 +15,6 @@ next-env.d.ts
 prisma/*.db
 prisma/*.db-journal
 prisma/dev.db*
+
+# Freebuff agent metadata (local only)
+.freebuff/
