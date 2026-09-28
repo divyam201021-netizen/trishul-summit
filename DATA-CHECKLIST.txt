@@ -1,0 +1,490 @@
+================================================================================
+ TRISHUL SUMMIT - DATA THAT MUST BE FILLED IN
+ Complete checklist of every value the website needs from the organizing
+ committee, and exactly where each one is entered.
+================================================================================
+
+Generated from the live configuration registry (src/lib/config/registry.ts),
+the database schema (prisma/schema.prisma) and the seeded content rows.
+Version of record: this file matches the site as currently built.
+
+--------------------------------------------------------------------------------
+ HOW THIS WORKS
+--------------------------------------------------------------------------------
+* Nothing on this site is invented. Any value that has not been supplied
+  renders as an unmistakable placeholder, e.g.  [EVENT DATE - TBD]
+
+* Every item below is edited by an organizer from the admin workspace. No code
+  change, redeploy or developer is required. Fill a value and it appears
+  instantly everywhere it is used.
+
+* Nothing is lost by leaving a field empty. An empty field is honest; a wrong
+  field is not. Fill only what has actually been decided.
+
+* Ticking a box is not enough - the value must exist in the admin workspace.
+
+--------------------------------------------------------------------------------
+ WHERE VALUES ARE EDITED
+--------------------------------------------------------------------------------
+ /admin/settings          Event facts, brand, fees, contact, SEO, legal
+ /admin/content           Policies (bodies) and FAQ answers
+ /admin/committees        One record per committee
+ /admin/schedule          One record per programme session
+ /admin/communications    Announcements and email broadcasts
+ /admin/staff             Organizer accounts and their roles
+ .env                     Environment values (secrets, payment, mail, origin)
+
+ Admin sign-in: /admin/sign-in
+
+
+================================================================================
+ 1. IDENTITY & BRAND                                   /admin/settings
+================================================================================
+These define how the summit presents itself everywhere.
+
+  [ ] EVENT TAGLINE
+      Key   : identity.tagline
+      Used  : hero headline area, social previews, page leads
+      Note  : one line, the sentence a first-time visitor should remember
+
+  [ ] SHORT APPROVED DESCRIPTION
+      Key   : identity.shortDescription
+      Used  : footer, social preview cards, committee page meta
+      Note  : 1-2 sentences, approved wording
+
+  [ ] FULL EVENT DESCRIPTION
+      Key   : identity.longDescription
+      Used  : about page, editorial blocks
+      Note  : several paragraphs are fine
+
+  [ ] ORGANIZER / INSTITUTION
+      Key   : identity.organizer
+      Used  : footer, policy pages, legal attribution
+      Note  : the exact legal or institutional name to display
+
+  [ ] OFFICIAL LOGO (file or URL)
+      Key   : identity.logoUrl
+      Used  : header, footer, social previews
+      Note  : until supplied, a typographic wordmark is used and the site
+              states: [OFFICIAL LOGO - PLACEHOLDER]
+
+  [ ] HERO IMAGERY (URL)
+      Key   : identity.heroImageUrl
+      Used  : hero band
+      Note  : optional. The current hero is typographic and needs no image.
+
+  [ ] PRIMARY BRAND COLOR (hex, e.g. #3746A6)
+      Key   : identity.brandColor
+      Used  : the entire colour ramp - buttons, links, focus rings, tints
+      Note  : a single hex value generates the full accessible ramp at runtime
+
+  [ ] REGISTRATION STATUS
+      Key   : identity.registrationStatusLabel
+      Options: OPEN / CLOSED / FULL / WAITLIST
+      Used  : hero status pill, at-a-glance strip, registration flow
+      Note  : leave unset (TBD) until the decision is final
+
+
+================================================================================
+ 2. DATES, FORMAT & ELIGIBILITY                        /admin/settings
+================================================================================
+
+  [ ] EVENT DATE (human-readable summary)
+      Key   : event.dateSummary
+      Example: 3-5 April 2026
+      Used  : hero, at-a-glance strip, schedule, portal, footer, SEO
+
+  [ ] START DATE
+      Key   : event.startDate
+
+  [ ] END DATE
+      Key   : event.endDate
+      Note  : use the event's own calendar dates, not a delegate's local date
+
+  [ ] TIME ZONE (IANA name, e.g. Asia/Kolkata, Europe/London, UTC)
+      Key   : event.timeZone
+      Used  : every place a time is shown
+      CRITICAL: session times are NEVER displayed without an explicit time
+                zone. Without this value, all times stay hidden and labelled
+                [TIME ZONE - TBD] / [START / END TIME - TBD].
+
+  [ ] LANGUAGE(S) OF THE SUMMIT
+      Key   : event.languages
+      Example: English; English and Hindi
+      Type  : list - one entry per language
+
+  [ ] ELIGIBILITY
+      Key   : event.eligibility
+      Used  : hero "who can take part", FAQ, delegate information, legal
+      Note  : who may apply (school students, university, independent, region
+              limits, etc.) in the wording you want the public to read
+
+  [ ] AGE REQUIREMENT
+      Key   : event.ageRequirement
+      Used  : delegate info, registration step 1, FAQ
+
+  [ ] MUN EXPERIENCE POLICY
+      Key   : event.munExperiencePolicy
+      Used  : delegate info, registration, FAQ
+      Note  : whether prior Model UN experience is required, preferred or
+              irrelevant - say which
+
+  [ ] PARTICIPANT CATEGORIES
+      Key   : event.participantCategories
+      Status: a provisional list exists (School student / University student /
+              Independent - other). CONFIRM, EDIT or REPLACE.
+      Used  : registration step 1 dropdown
+
+  [ ] TOTAL CAPACITY
+      Key   : event.capacity
+      Note  : a real number, or leave empty. Seat counts are never invented.
+
+  [ ] ALLOCATION PROCESS
+      Key   : event.allocationProcess
+      Used  : "How it works" step 3, FAQ, committee pages, portal
+      Note  : how preferences become assignments, who decides, in what order
+
+  [ ] NEXT STEP AFTER SUBMISSION
+      Key   : event.nextStepAfterSubmission
+      Used  : registration confirmation screen, confirmation email, FAQ
+
+  [ ] ARE COMMITTEE PREFERENCES GUARANTEED?
+      Key   : event.preferencesGuaranteed
+      Type  : yes / no     Default: NO
+      Note  : leave as NO unless selection is genuinely guaranteed. The public
+              copy changes based on this answer.
+
+  [ ] EVENT FORMAT
+      Key   : event.format
+      Status: currently "Online Summit" (from the brief). Confirm or amend.
+
+
+================================================================================
+ 3. REGISTRATION WINDOW                                /admin/settings
+================================================================================
+
+  [ ] REGISTRATION OPENING DATE
+      Key   : registration.opensAt
+
+  [ ] REGISTRATION CLOSING DATE
+      Key   : registration.closesAt
+
+  [ ] REGISTRATION DEADLINE (public wording)
+      Key   : registration.deadline
+      Example: 20 March 2026, 23:59 IST
+      Note  : include the time zone whenever you publish a time
+
+  [ ] ESTIMATED COMPLETION TIME (minutes)
+      Key   : registration.estimatedMinutes
+      Status: currently 10 - confirm
+
+  [ ] INFORMATION YOU WILL ASK FOR (list shown before the form)
+      Key   : registration.requiredItems
+      Status: a provisional list exists - confirm, add or remove entries
+
+  [ ] CONFIRMATION EMAIL NOTE
+      Key   : registration.confirmationEmailNote
+      Status: currently "Check your email for confirmation." - confirm
+
+
+================================================================================
+ 4. FEES & PAYMENT                                     /admin/settings
+================================================================================
+If participation is free, say so explicitly rather than leaving these blank.
+
+  [ ] REGISTRATION FEE                 Key: fees.registrationFee
+  [ ] CURRENCY                         Key: fees.currency
+  [ ] REFUND POLICY                    Key: fees.refundPolicy
+  [ ] PAYMENT METHOD                   Key: fees.paymentMethod
+  [ ] WAIVER INFORMATION               Key: fees.waiverInformation
+      (who may request a fee waiver, how, by when)
+  [ ] WHAT THE FEE INCLUDES            Key: fees.delegateFeeIncludes (list)
+
+  Payment processing is OFF until the .env values in section 12 are set.
+  Until then checkout is hidden and the UI shows [PAYMENT DETAILS - TBD].
+
+
+================================================================================
+ 5. ONLINE PLATFORM & PREPARATION                      /admin/settings
+================================================================================
+
+  [ ] ONLINE PLATFORM NAME
+      Key   : platform.name
+      Example: Zoom / Google Meet / Discord / own platform
+
+  [ ] JOINING LINK
+      Key   : platform.joinUrl
+      Note  : held privately - released only to CONFIRMED participants in the
+              portal. It is never shown on a public page.
+
+  [ ] TECHNICAL REQUIREMENTS
+      Key   : platform.technicalRequirements
+      Note  : device, browser/OS versions, minimum connection, camera,
+              microphone, bandwidth, power backup
+
+  [ ] JOINING INSTRUCTIONS
+      Key   : platform.joiningInstructions
+      Note  : how to join a session, waiting rooms, display names, etiquette
+
+  [ ] RECORDING POLICY
+      Key   : platform.recordingPolicy
+      Note  : whether sessions are recorded, who may record, where recordings
+              are stored, for how long
+
+
+================================================================================
+ 6. EDITORIAL CONTENT (11 APPROVED BLOCKS)             /admin/settings
+================================================================================
+Until these are supplied, the matching sections display a placeholder and a
+notice that the copy is still being finalised.
+
+  [ ] KEY DIFFERENTIATOR                 Key: content.differentiator
+  [ ] LEARNING OUTCOME                   Key: content.learningOutcome
+  [ ] PARTICIPANT EXPERIENCE             Key: content.participantExperience
+  [ ] LEADERSHIP / DIPLOMACY OUTCOME     Key: content.leadershipOutcome
+  [ ] FINAL CALL-TO-ACTION COPY          Key: content.finalCtaCopy
+  [ ] MISSION STATEMENT                  Key: content.mission
+  [ ] WHO IT IS FOR (audience)           Key: content.whoItsFor
+  [ ] WHAT PARTICIPANTS CAN EXPECT       Key: content.whatToExpect
+  [ ] ONLINE EXPERIENCE                  Key: content.onlineExperience
+  [ ] WHY PARTICIPATE                    Key: content.whyParticipate
+  [ ] ABOUT PAGE INTRODUCTION            Key: content.aboutIntro
+
+
+================================================================================
+ 7. CONTACT & SOCIAL                                   /admin/settings
+================================================================================
+
+  [ ] SUPPORT EMAIL                      Key: contact.supportEmail
+      Note: shown publicly; use a monitored address
+  [ ] SUPPORT CHANNEL                    Key: contact.supportChannel
+      Example: WhatsApp group / Discord server / support desk
+  [ ] SUPPORT RESPONSE TIME              Key: contact.supportResponseTime
+      Example: within 24 hours on weekdays
+  [ ] INSTAGRAM                          Key: contact.instagram
+  [ ] LINKEDIN                           Key: contact.linkedin
+  [ ] OTHER SOCIAL PROFILE               Key: contact.otherSocial
+  [ ] PRESS / PARTNERSHIP EMAIL          Key: contact.pressEmail
+      Note: inbound only - not shown on public pages
+
+
+================================================================================
+ 8. ANNOUNCEMENT BANNER (OPTIONAL)                     /admin/settings
+================================================================================
+  [ ] SHOW ANNOUNCEMENT BANNER?          Key: announcement.enabled  (yes/no)
+  [ ] ANNOUNCEMENT MESSAGE               Key: announcement.message
+  [ ] SEVERITY                           Key: announcement.severity
+      Options: info / important / critical
+  [ ] ANNOUNCEMENT LINK                  Key: announcement.href
+
+  Do not use the banner for pressure tactics. It is for real notices only.
+  Time-limited announcements can also be sent from /admin/communications.
+
+
+================================================================================
+ 9. SEO & SOCIAL PREVIEWS                              /admin/settings
+================================================================================
+
+  [ ] DEFAULT META DESCRIPTION           Key: seo.defaultDescription
+  [ ] SOCIAL PREVIEW IMAGE (URL)         Key: seo.ogImageUrl
+  [ ] CANONICAL BASE URL                 Key: seo.canonicalBaseUrl
+      Note: set to the live origin before launch (or set APP_URL)
+  [ ] TITLE SUFFIX                       Key: seo.titleSuffix
+      Status: currently "Trishul Summit" - confirm
+
+
+================================================================================
+10. LEGAL & PARTICIPATION                              /admin/settings
+================================================================================
+
+  [ ] PRIVACY CONTACT                    Key: legal.privacyContact
+  [ ] TERMS NOTE                         Key: legal.termsNote
+  [ ] IS GUARDIAN CONSENT REQUIRED?      Key: legal.guardianConsentRequired
+      Type: yes / no
+  [ ] POLICY BUNDLE VERSION              Key: legal.policyVersion
+      Status: currently "1.0" - bump when policy text changes
+
+
+================================================================================
+11. POLICIES - BODIES AWAITING APPROVED TEXT          /admin/content
+================================================================================
+Five policy records already exist, unpublished and without a body. Each needs
+approved text and publication. Until then the page shows
+[POLICY TEXT - TBD].
+
+  [ ] PRIVACY NOTICE
+      Data collected, purpose, legal basis, retention, who to contact,
+      how to request deletion
+  [ ] TERMS OF PARTICIPATION
+      Conditions a participant accepts when registering
+  [ ] CODE OF CONDUCT
+      Expected behaviour in committees and channels, and what happens if it
+      is breached
+  [ ] CANCELLATION / REFUND POLICY
+      Withdrawal, cancellation, refund eligibility and process
+  [ ] MARKETING & UPDATES CONSENT
+      Optional non-transactional communications and how to opt out
+
+  Also confirm, for each policy: title, summary, version, publish (yes/no).
+
+
+================================================================================
+12. FAQ ANSWERS                                       /admin/content
+================================================================================
+The twelve questions below are already in place. Every ANSWER is empty and
+renders [ANSWER - TBD]. Supply the answer text, or edit/remove a question.
+
+  [ ] What is Trishul Summit?
+  [ ] Who can participate?
+  [ ] Is prior Model UN experience required?
+  [ ] When is the summit?
+  [ ] How does online participation work?
+  [ ] What do I need in order to take part?
+  [ ] How does registration work?
+  [ ] What happens after I submit my application?
+  [ ] How are committees allocated?
+  [ ] What does it cost to participate?
+  [ ] What is expected of participants?
+  [ ] Who do I contact if I have a question?
+
+
+================================================================================
+13. COMMITTEES - ONE RECORD EACH                      /admin/committees
+================================================================================
+Three clearly-labelled PLACEHOLDER committee rows exist today. Either fill
+them in or delete them and create the real list. Per committee:
+
+  [ ] Name
+  [ ] Type                (e.g. General Assembly / Crisis / Specialised)
+  [ ] Agenda / Topic
+  [ ] Description
+  [ ] Language
+  [ ] Experience level    (beginner / intermediate / advanced / all)
+  [ ] Capacity            (number of seats - or leave empty)
+  [ ] Status              (open / closed / waitlist)
+  [ ] Expected profile    (who the committee suits)
+  [ ] Preparation guidance
+  [ ] Chair name          (only if officially decided)
+  [ ] Chair title
+  [ ] Placeholder flag removed once the record is real
+
+  Notes:
+  * A committee is only shown to a participant after their application is
+    CONFIRMED.
+  * Seats remaining are calculated from real assignments. Never publish a
+    seat count you cannot stand behind.
+
+
+================================================================================
+14. SCHEDULE - ONE RECORD PER SESSION                 /admin/schedule
+================================================================================
+The schedule is currently empty, so nothing is published. Per session:
+
+  [ ] Day label           (e.g. "Day 1" - free text your programme uses)
+  [ ] Date
+  [ ] Start time          (24-hour clock)
+  [ ] End time
+  [ ] Time zone           (sessions inherit the event time zone unless set)
+  [ ] Session title
+  [ ] Session type        (plenary / committee / workshop / ceremony / break)
+  [ ] Description
+  [ ] Platform            (if different from the main platform)
+  [ ] Committee           (optional link to a committee)
+  [ ] Published?          (yes/no)
+
+  A session with no time and no time zone is published as
+  [START / END TIME - TBD] rather than a misleading time.
+
+
+================================================================================
+15. ORGANIZER ACCOUNTS                                /admin/staff
+================================================================================
+
+  [ ] One account per organizer: full name, email, role, initial password
+      (shared over a secure channel, never chat or email)
+  [ ] Roles available: director / organizer / registrar / reviewer / finance /
+      communications, plus super admin
+  [ ] MFA enrolment for every account that can see participant data
+  [ ] Review the permission list per role and remove anything not needed
+
+  Participant personal data must never be exported to personal devices or
+  personal cloud accounts.
+
+
+================================================================================
+16. ENVIRONMENT VALUES (.env - not in the admin workspace)
+================================================================================
+
+  [ ] APP_URL                 Public origin. Used for canonical URLs, links in
+                              emails and payment redirects.
+  [ ] DATABASE_URL            Database connection string.
+  [ ] SESSION_SECRET          32+ byte random string. Required in production.
+  [ ] ANALYTICS_SALT          Rotating salt for analytics IP hashing.
+  [ ] MAIL_TRANSPORT          "log" (default, records only) or "smtp"
+  [ ] MAIL_FROM               Sender address shown to participants
+  [ ] SMTP_HOST / SMTP_PORT / SMTP_USER / SMTP_PASSWORD
+                              Required when MAIL_TRANSPORT=smtp
+  [ ] PAYMENT_PROVIDER        stripe / razorpay / custom  (leave empty for now)
+  [ ] PAYMENT_SECRET_KEY
+  [ ] PAYMENT_WEBHOOK_SECRET
+  [ ] TURNSTILE_SITE_KEY / TURNSTILE_SECRET_KEY
+                              Optional bot protection. When absent, the built-in
+                              honeypot, rate limit and timing checks are used.
+
+  Until the SMTP values are set, every email is recorded in the database and
+  logged instead of being delivered. Until the payment values are set,
+  checkout stays disabled and the UI shows [PAYMENT DETAILS - TBD].
+  Never commit real secrets to version control.
+
+
+================================================================================
+ MINIMUM SET REQUIRED TO LAUNCH PUBLICLY
+================================================================================
+Everything else can follow, but the summit should not be presented as open
+until these exist:
+
+  [ ] Event date summary, start date, end date
+  [ ] Time zone (nothing time-related works without it)
+  [ ] Eligibility (who may apply)
+  [ ] Registration opening date, closing date and deadline
+  [ ] Fee and currency - or an explicit statement that participation is free
+  [ ] Refund / cancellation policy
+  [ ] Support email and support channel
+  [ ] Platform name, technical requirements and joining instructions
+  [ ] Allocation process (how preferences become assignments)
+  [ ] Brand colour (and logo, if one exists)
+  [ ] Privacy Notice and Terms of Participation bodies, published
+  [ ] Committee list
+  [ ] Schedule
+  [ ] At least one organizer account with MFA, and a monitored support inbox
+
+
+================================================================================
+ WHAT NEVER GETS INVENTED (BY DESIGN)
+================================================================================
+The platform will not create, guess or imply any of the following, and no
+setting can make it do so:
+
+  - Dates, times or time zones that were not supplied
+  - Fees, currency or payment details before they are confirmed
+  - Seat counts, "only N left" or registration countdowns
+  - Testimonials, endorsements, partner or sponsor logos
+  - Attendance numbers, delegate statistics or growth claims
+  - Committee names, agendas or chair names
+  - FAQ answers, policy text or any legal wording
+  - Session times without an explicit time zone
+
+Empty values remain visibly empty until an organizer fills them in.
+
+
+================================================================================
+ CURRENT COMPLETENESS
+================================================================================
+Supplied and live : event name, wordmark, online format, event name in SEO
+                    title suffix, provisional participant categories,
+                    provisional "information you will ask for" list,
+                    provisional registration completion estimate, 12 FAQ
+                    questions, 5 policy records (empty, unpublished),
+                    3 placeholder committees
+Awaiting input    : everything else listed above
+================================================================================

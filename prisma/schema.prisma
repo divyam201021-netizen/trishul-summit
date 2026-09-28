@@ -1,0 +1,557 @@
+// ============================================================================
+// Trishul Summit — data model
+// Provider: SQLite by default (zero-setup, file based). The schema uses only
+// portable types so switching to PostgreSQL/Supabase is a one-line change of
+// `provider` plus a connection string: enums and arrays are modelled as
+// validated strings / join tables on purpose, and structured payloads are
+// stored as JSON strings (see src/lib/db/json.ts for the typed accessors).
+// ============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  // PostgreSQL. This runs on Supabase, and the move away from SQLite is
+  // deliberate: serverless platforms (Vercel) give functions a read-only,
+  // ephemeral filesystem, so a file-backed database would fail on every write.
+  //
+  // URL      — the pooled connection (PgBouncer, port 6543), used at runtime.
+  // directUrl — the direct connection (port 5432), used by prisma db push and
+  //             migrate, which cannot run through transaction pooling.
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Configuration & editorial content
+// ---------------------------------------------------------------------------
+
+/// Centralised event configuration. Every value the organizer has not supplied
+/// yet is absent here, and the UI renders `[LABEL — TBD]` instead of a guess.
+/// Editable from /admin/content. Keys are declared in src/lib/config/fields.ts.
+model SiteSetting {
+  key         String   @id
+  value       String // JSON-encoded scalar, list or object
+  updatedAt   DateTime @updatedAt
+  updatedById String?
+
+  updatedBy AdminUser? @relation(fields: [updatedById], references: [id], onDelete: SetNull)
+
+  @@map("site_settings")
+}
+
+model FAQItem {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String? // null => "[ANSWER — TBD]"
+  category  String?
+  order     Int      @default(0)
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([published, order])
+  @@map("faq_items")
+}
+
+model Policy {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String
+  summary   String?
+  body      String? // Markdown-ish plain text; null => placeholder notice
+  version   String   @default("1.0")
+  published Boolean  @default(false)
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  consents Consent[]
+
+  @@map("policies")
+}
+
+model Announcement {
+  id          String    @id @default(cuid())
+  title       String
+  body        String?
+  severity    String    @default("info") // info | important | critical
+  audience    String    @default("public") // public | participants | admins
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  authorId    String?
+
+  author AdminUser? @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  @@index([audience, publishedAt])
+  @@map("announcements")
+}
+
+// ---------------------------------------------------------------------------
+// Programme: committees & schedule
+// ---------------------------------------------------------------------------
+
+model Committee {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  /// null => "[COMMITTEE NAME — TBD]" (placeholder committee, clearly labelled)
+  name            String?
+  type            String? // e.g. General Assembly / Crisis / Specialised
+  topic           String?
+  description     String?
+  language        String?
+  experienceLevel String? // beginner | intermediate | advanced | all
+  capacity        Int?
+  status          String   @default("open") // open | closed | waitlist
+  expectedProfile String?
+  preparationInfo String?
+  chairName       String? // only populated when officially supplied by the organizer
+  chairTitle      String?
+  isPlaceholder   Boolean  @default(true)
+  displayOrder    Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  preferences          ApplicationPreference[]
+  assignments          Assignment[]
+  assignedApplications Application[]
+  sessions             ScheduleSession[]
+
+  @@index([displayOrder])
+  @@map("committees")
+}
+
+model ScheduleSession {
+  id          String    @id @default(cuid())
+  dayLabel    String? // "[DAY 1 — TBD]" style label, organizer supplied
+  date        DateTime?
+  startTime   String? // stored as "HH:mm" local-to-event time, never assumed UTC
+  endTime     String?
+  timeZone    String? // canonical event time zone; required before times render
+  title       String? // null => placeholder session title
+  sessionType String? // plenary | committee | workshop | ceremony | break
+  description String?
+  platform    String?
+  committeeId String?
+  order       Int       @default(0)
+  published   Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  committee Committee? @relation(fields: [committeeId], references: [id], onDelete: SetNull)
+
+  @@index([published, order])
+  @@map("schedule_sessions")
+}
+
+// ---------------------------------------------------------------------------
+// People
+// ---------------------------------------------------------------------------
+
+model Participant {
+  id                  String    @id @default(cuid())
+  email               String    @unique
+  /// Supabase auth identity (auth.users.id). Set for every account created
+  /// through the Supabase identity gate, and mirror of
+  /// public.trishul_participants.auth_user_id in the participant registry.
+  authUserId          String?   @unique
+  fullName            String
+  /// Null when identity is owned by Supabase Auth — there is then no local
+  /// credential to verify, and verifyPassword() correctly returns false.
+  passwordHash        String?
+  country             String?
+  region              String?
+  timeZone            String?
+  ageBand             String? // collected only when the organizer approves it
+  dateOfBirth         DateTime?
+  institution         String?
+  participantCategory String? // school | university | independent | other
+  guardianEmail       String?
+  phone               String?
+  preferredLanguage   String?
+  emailVerifiedAt     DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  lastLoginAt         DateTime?
+  disabledAt          DateTime?
+
+  applications Application[]
+  sessions     Session[]
+  consents     Consent[]
+  auditEvents  AuditEvent[]
+
+  @@index([email])
+  @@map("participants")
+}
+
+model AdminRole {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  name        String
+  description String?
+  /// JSON array of permission strings — see src/lib/auth/permissions.ts
+  permissions String   @default("[]")
+  isSystem    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  users AdminUser[]
+
+  @@map("admin_roles")
+}
+
+model AdminUser {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String
+  passwordHash String
+  roleId       String
+  disabledAt   DateTime?
+  mfaEnabled   Boolean   @default(false)
+  /// TOTP secret, encrypted-at-rest ready. Never returned to any client.
+  mfaSecret    String?
+  lastLoginAt  DateTime?
+  failedLogins Int       @default(0)
+  lockedUntil  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  role            AdminRole                  @relation(fields: [roleId], references: [id])
+  sessions        Session[]
+  auditEvents     AuditEvent[]
+  reviewerNotes   ApplicationNote[]
+  statusChanges   ApplicationStatusHistory[]
+  assignmentsMade Assignment[]
+  communications  Communication[]
+  announcements   Announcement[]
+  paymentActions  PaymentAction[]
+  settingsUpdates SiteSetting[]
+
+  @@map("admin_users")
+}
+
+// ---------------------------------------------------------------------------
+// Registration
+// ---------------------------------------------------------------------------
+
+model Application {
+  id                  String    @id @default(cuid())
+  /// Public reference, e.g. TRI-8F3K2QW9. Random, contains no personal data.
+  reference           String    @unique
+  participantId       String
+  status              String    @default("DRAFT")
+  rolePreference      String? // delegate | chair | observer — organizer-configurable
+  munExperience       String? // none | school | conference | multiple
+  experienceDetail    String?
+  motivation          String?
+  topicInterest       String?
+  responsesJson       String    @default("{}") // extra organizer-defined questions
+  assignedCommitteeId String?
+  waitlistPosition    Int?
+  submittedAt         DateTime?
+  decidedAt           DateTime?
+  withdrawnAt         DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  /// Version pin of the policy bundle the applicant accepted.
+  policyVersion       String?
+
+  participant       Participant                @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  assignedCommittee Committee?                 @relation(fields: [assignedCommitteeId], references: [id], onDelete: SetNull)
+  preferences       ApplicationPreference[]
+  assignments       Assignment[]
+  statusHistory     ApplicationStatusHistory[]
+  notes             ApplicationNote[]
+  payments          Payment[]
+  consents          Consent[]
+  communications    CommunicationRecipient[]
+
+  @@index([status])
+  @@index([submittedAt])
+  @@map("applications")
+}
+
+model ApplicationPreference {
+  id            String   @id @default(cuid())
+  applicationId String
+  committeeId   String
+  rank          Int
+  note          String?
+  createdAt     DateTime @default(now())
+
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  committee   Committee   @relation(fields: [committeeId], references: [id], onDelete: Cascade)
+
+  @@unique([applicationId, committeeId])
+  @@unique([applicationId, rank])
+  @@map("application_preferences")
+}
+
+/// Append-only allocation history. Never updated or deleted: the full trail of
+/// previous → new assignment, actor and timestamp is preserved.
+model Assignment {
+  id                  String    @id @default(cuid())
+  applicationId       String
+  committeeId         String
+  role                String?
+  previousCommitteeId String?
+  assignedById        String?
+  reason              String?
+  createdAt           DateTime  @default(now())
+  revokedAt           DateTime?
+
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  committee   Committee   @relation(fields: [committeeId], references: [id], onDelete: Cascade)
+  assignedBy  AdminUser?  @relation(fields: [assignedById], references: [id], onDelete: SetNull)
+
+  @@index([applicationId, createdAt])
+  @@map("assignments")
+}
+
+model ApplicationStatusHistory {
+  id            String   @id @default(cuid())
+  applicationId String
+  fromStatus    String?
+  toStatus      String
+  /// Participant-visible explanation (never internal reasoning).
+  publicNote    String?
+  actorId       String?
+  createdAt     DateTime @default(now())
+
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  actor       AdminUser?  @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([applicationId, createdAt])
+  @@map("application_status_history")
+}
+
+/// Internal reviewer notes. Permission-gated; never rendered in participant
+/// routes and never returned by participant-facing queries.
+model ApplicationNote {
+  id            String   @id @default(cuid())
+  applicationId String
+  authorId      String?
+  body          String
+  createdAt     DateTime @default(now())
+
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  author      AdminUser?  @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  @@index([applicationId, createdAt])
+  @@map("application_notes")
+}
+
+model Consent {
+  id            String    @id @default(cuid())
+  participantId String?
+  applicationId String?
+  policySlug    String
+  policyId      String?
+  /// required | optional — marketing consent is always recorded separately.
+  kind          String    @default("required")
+  granted       Boolean
+  version       String?
+  grantedAt     DateTime?
+  revokedAt     DateTime?
+  createdAt     DateTime  @default(now())
+
+  participant Participant? @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  application Application? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  policy      Policy?      @relation(fields: [policyId], references: [id], onDelete: SetNull)
+
+  @@index([participantId])
+  @@index([applicationId])
+  @@map("consents")
+}
+
+// ---------------------------------------------------------------------------
+// Payments
+// ---------------------------------------------------------------------------
+
+model Payment {
+  id             String    @id @default(cuid())
+  applicationId  String
+  /// pending | initiated | succeeded | failed | refunded | manually_verified | not_configured
+  status         String    @default("not_configured")
+  amountMinor    Int?
+  currency       String?
+  provider       String?
+  providerRef    String?
+  /// Guarantees idempotent processing of retries and duplicate callbacks.
+  idempotencyKey String?   @unique
+  failureReason  String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  verifiedAt     DateTime?
+  refundedAt     DateTime?
+
+  application Application     @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  actions     PaymentAction[]
+  events      PaymentEvent[]
+
+  @@index([applicationId])
+  @@index([status])
+  @@map("payments")
+}
+
+/// Verified provider callbacks. `providerEventId` is unique so replays are
+/// ignored — payment reconciliation is idempotent by construction.
+model PaymentEvent {
+  id              String    @id @default(cuid())
+  paymentId       String?
+  providerEventId String    @unique
+  type            String
+  payloadJson     String    @default("{}")
+  receivedAt      DateTime  @default(now())
+  processedAt     DateTime?
+  error           String?
+
+  payment Payment? @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+
+  @@map("payment_events")
+}
+
+/// Manual payment reconciliation trail (organizer verified a transfer).
+model PaymentAction {
+  id        String   @id @default(cuid())
+  paymentId String
+  action    String // mark_verified | mark_failed | refund | note
+  note      String?
+  actorId   String?
+  createdAt DateTime @default(now())
+
+  payment Payment    @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  actor   AdminUser? @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@map("payment_actions")
+}
+
+// ---------------------------------------------------------------------------
+// Communications
+// ---------------------------------------------------------------------------
+
+model Communication {
+  id             String    @id @default(cuid())
+  templateKey    String
+  subject        String
+  body           String
+  audience       String    @default("status:SUBMITTED")
+  kind           String    @default("transactional") // transactional | marketing
+  status         String    @default("draft") // draft | sending | sent | failed
+  recipientCount Int       @default(0)
+  sentCount      Int       @default(0)
+  failedCount    Int       @default(0)
+  createdById    String?
+  createdAt      DateTime  @default(now())
+  sentAt         DateTime?
+
+  createdBy  AdminUser?               @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  recipients CommunicationRecipient[]
+
+  @@index([status, createdAt])
+  @@map("communications")
+}
+
+model CommunicationRecipient {
+  id              String    @id @default(cuid())
+  communicationId String
+  applicationId   String?
+  email           String
+  status          String    @default("queued") // queued | sent | failed | skipped
+  error           String?
+  sentAt          DateTime?
+  createdAt       DateTime  @default(now())
+
+  communication Communication @relation(fields: [communicationId], references: [id], onDelete: Cascade)
+  application   Application?  @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+
+  @@index([communicationId, status])
+  @@map("communication_recipients")
+}
+
+/// Outcome of every send attempt, including transactional system mail.
+model EmailMessage {
+  id          String    @id @default(cuid())
+  to          String
+  templateKey String
+  subject     String
+  body        String
+  kind        String    @default("transactional")
+  transport   String?
+  status      String    @default("queued")
+  error       String?
+  createdAt   DateTime  @default(now())
+  sentAt      DateTime?
+
+  @@index([status, createdAt])
+  @@map("email_messages")
+}
+
+// ---------------------------------------------------------------------------
+// Auth, audit, analytics
+// ---------------------------------------------------------------------------
+
+model Session {
+  id            String    @id @default(cuid())
+  /// SHA-256 of the opaque session token. The token itself is only ever in the cookie.
+  tokenHash     String    @unique
+  kind          String // participant | admin
+  participantId String?
+  adminId       String?
+  createdAt     DateTime  @default(now())
+  lastSeenAt    DateTime  @default(now())
+  expiresAt     DateTime
+  revokedAt     DateTime?
+  ipHash        String?
+  userAgent     String?
+
+  participant Participant? @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  admin       AdminUser?   @relation(fields: [adminId], references: [id], onDelete: Cascade)
+
+  @@index([kind, expiresAt])
+  @@map("sessions")
+}
+
+model AuditEvent {
+  id                 String   @id @default(cuid())
+  actorType          String // admin | participant | system
+  participantActorId String?
+  adminActorId       String?
+  /// Denormalised display label so the trail survives account deletion.
+  actorLabel         String?
+  action             String
+  entityType         String
+  entityId           String?
+  summary            String?
+  beforeJson         String?
+  afterJson          String?
+  ipHash             String?
+  userAgent          String?
+  createdAt          DateTime @default(now())
+
+  participantActor Participant? @relation(fields: [participantActorId], references: [id], onDelete: SetNull)
+  adminActor       AdminUser?   @relation(fields: [adminActorId], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId])
+  @@index([createdAt])
+  @@map("audit_events")
+}
+
+/// Privacy-conscious analytics: aggregate interaction events only. A strict
+/// allow-list plus sanitiser (src/lib/analytics/events.ts) guarantees that no
+/// name, email, reference or free-text response is ever stored.
+model AnalyticsEvent {
+  id         String   @id @default(cuid())
+  name       String
+  path       String?
+  /// Random, cookie-less per-session id used only to group a visit.
+  sessionId  String?
+  propsJson  String   @default("{}")
+  referrer   String?
+  deviceType String?
+  createdAt  DateTime @default(now())
+
+  @@index([name, createdAt])
+  @@index([createdAt])
+  @@map("analytics_events")
+}

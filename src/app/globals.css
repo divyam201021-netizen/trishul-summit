@@ -1,0 +1,1510 @@
+@import 'tailwindcss';
+
+/* ==========================================================================
+   TRISHUL SUMMIT — DESIGN SYSTEM
+   Single source of truth for tokens. Nothing in the design system is hard-coded
+   inside page components; runtime-overridable values (brand colour, radii) are
+   declared as plain CSS custom properties on :root and re-exported through
+   Tailwind's @theme so utilities like `bg-brand-600` pick them up live.
+   ========================================================================== */
+
+/* --- Runtime-overridable brand palette (replaceable from /admin/settings) --- */
+:root {
+  /* [PRIMARY BRAND COLOR — TBD] — default system value, replaceable at runtime */
+  /* Petrol: a deep, low-chroma teal-blue taken from engraved maps and
+     institutional letterheads, not from a UI kit. Reads as deliberation rather
+     than as a startup gradient. */
+  --brand-50: #eff5f6;
+  --brand-100: #d7e7e9;
+  --brand-200: #aed1d6;
+  --brand-300: #7fb3ba;
+  --brand-400: #529098;
+  --brand-500: #35757e;
+  --brand-600: #245e68;
+  --brand-700: #1c4b54;
+  --brand-800: #173b43;
+  --brand-900: #132e34;
+  --brand-950: #0a191d;
+
+  /* Antique brass: numerals, rules and emphasis. Deliberately closer to a
+     metal than to a highlighter. */
+  --accent-300: #dcc28a;
+  --accent-400: #c3a05a;
+  --accent-500: #a07c30;
+  --accent-600: #7e5f1e;
+
+  /* Ink: a cool charcoal that gives warm paper its contrast. */
+  --ink-50: #f5f6f7;
+  --ink-100: #eaedee;
+  --ink-200: #dbdfe2;
+  --ink-300: #c1c7cd;
+  --ink-400: #99a1a9;
+  --ink-500: #737b84;
+  --ink-600: #565d66;
+  --ink-700: #3f454d;
+  --ink-800: #282d34;
+  --ink-900: #171b20;
+  --ink-950: #080b0e;
+
+  /* Bone paper, not screen white. */
+  --paper: #f7f4ee;
+  --paper-raised: #fffdf8;
+  --paper-sunk: #efeae1;
+
+  --success-50: #e9f4ec;
+  --success-100: #cfe7d6;
+  --success-500: #1f6b45;
+  --success-600: #185538;
+  --success-700: #123f2a;
+
+  --warning-50: #fbf1e2;
+  --warning-100: #f4dfbc;
+  --warning-500: #96581a;
+  --warning-600: #7a4713;
+  --warning-700: #5f370f;
+
+  --danger-50: #fbeceb;
+  --danger-100: #f3d4d1;
+  --danger-500: #9c2b20;
+  --danger-600: #7f221a;
+  --danger-700: #631a13;
+
+  --info-500: var(--brand-600);
+
+  /* Crisper than a consumer app: plates and controls read as printed edges. */
+  --radius-system: 0.5rem;
+
+  /* Motion durations. Paired with the easing curves in @theme, these give the
+     whole platform one movement vocabulary instead of per-page timings. */
+  --dur-1: 120ms;
+  --dur-2: 220ms;
+  --dur-3: 420ms;
+  --dur-4: 760ms;
+  --dur-5: 1400ms;
+
+  /* Header height, read by sticky offsets and scroll padding. */
+  --header-h: 72px;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --header-h: 80px;
+  }
+}
+
+@theme {
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: var(--font-display-serif), 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+  --font-mono: var(--font-mono-code), ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  --color-brand-50: var(--brand-50);
+  --color-brand-100: var(--brand-100);
+  --color-brand-200: var(--brand-200);
+  --color-brand-300: var(--brand-300);
+  --color-brand-400: var(--brand-400);
+  --color-brand-500: var(--brand-500);
+  --color-brand-600: var(--brand-600);
+  --color-brand-700: var(--brand-700);
+  --color-brand-800: var(--brand-800);
+  --color-brand-900: var(--brand-900);
+  --color-brand-950: var(--brand-950);
+
+  --color-accent-300: var(--accent-300);
+  --color-accent-400: var(--accent-400);
+  --color-accent-500: var(--accent-500);
+  --color-accent-600: var(--accent-600);
+
+  --color-ink-50: var(--ink-50);
+  --color-ink-100: var(--ink-100);
+  --color-ink-200: var(--ink-200);
+  --color-ink-300: var(--ink-300);
+  --color-ink-400: var(--ink-400);
+  --color-ink-500: var(--ink-500);
+  --color-ink-600: var(--ink-600);
+  --color-ink-700: var(--ink-700);
+  --color-ink-800: var(--ink-800);
+  --color-ink-900: var(--ink-900);
+  --color-ink-950: var(--ink-950);
+
+  --color-paper: var(--paper);
+  --color-paper-raised: var(--paper-raised);
+  --color-paper-sunk: var(--paper-sunk);
+
+  --color-success-50: var(--success-50);
+  --color-success-100: var(--success-100);
+  --color-success-500: var(--success-500);
+  --color-success-600: var(--success-600);
+  --color-success-700: var(--success-700);
+
+  --color-warning-50: var(--warning-50);
+  --color-warning-100: var(--warning-100);
+  --color-warning-500: var(--warning-500);
+  --color-warning-600: var(--warning-600);
+  --color-warning-700: var(--warning-700);
+
+  --color-danger-50: var(--danger-50);
+  --color-danger-100: var(--danger-100);
+  --color-danger-500: var(--danger-500);
+  --color-danger-600: var(--danger-600);
+  --color-danger-700: var(--danger-700);
+
+  --radius-xs: 0.125rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: var(--radius-system);
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.25rem;
+
+  /* Fluid editorial type scale */
+  --text-2xs: 0.6875rem;
+  --text-2xs--line-height: 1rem;
+  --text-display-sm: clamp(1.75rem, 1.35rem + 1.6vw, 2.5rem);
+  --text-display-sm--line-height: 1.1;
+  --text-display: clamp(2.25rem, 1.6rem + 2.6vw, 3.75rem);
+  --text-display--line-height: 1.04;
+  --text-display-lg: clamp(2.75rem, 1.6rem + 4.6vw, 5.5rem);
+  --text-display-lg--line-height: 0.98;
+  --text-display-xl: clamp(3.25rem, 1.4rem + 7.4vw, 8rem);
+  --text-display-xl--line-height: 0.9;
+  --text-display-2xl: clamp(3.5rem, 0.5rem + 13vw, 12.5rem);
+  --text-display-2xl--line-height: 0.82;
+  --text-lead: clamp(1.0625rem, 0.98rem + 0.5vw, 1.375rem);
+  --text-lead--line-height: 1.55;
+
+  /* Elevation ladder. Components never invent a shadow; they pick a step. */
+  --shadow-hair: 0 1px 2px rgb(11 11 15 / 0.05);
+  --shadow-raised: 0 1px 2px rgb(11 11 15 / 0.05), 0 12px 28px -16px rgb(11 11 15 / 0.16);
+  --shadow-float: 0 2px 8px rgb(11 11 15 / 0.07), 0 32px 64px -32px rgb(11 11 15 / 0.3);
+  --shadow-elevate: 0 1px 2px rgb(11 11 15 / 0.04), 0 8px 24px -12px rgb(11 11 15 / 0.12);
+  --shadow-lift: 0 2px 6px rgb(11 11 15 / 0.06), 0 24px 48px -24px rgb(11 11 15 / 0.24);
+  --shadow-inset-hair: inset 0 0 0 1px rgb(255 255 255 / 0.06);
+  --shadow-brand: 0 18px 40px -22px color-mix(in oklab, var(--brand-600) 55%, transparent);
+  --shadow-accent: 0 18px 44px -26px color-mix(in oklab, var(--accent-500) 60%, transparent);
+
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-soft: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.42, 0.44, 1);
+  --ease-in-quint: cubic-bezier(0.64, 0, 0.78, 0);
+
+  /* Named animations — one utility each, all reduced-motion aware. */
+  --animate-orbit: ts-orbit 52s linear infinite;
+  --animate-orbit-reverse: ts-orbit 74s linear infinite reverse;
+  --animate-rise: ts-rise var(--dur-4) var(--ease-out-expo) both;
+  --animate-rule-draw: ts-rule-draw 900ms var(--ease-out-expo) both;
+  --animate-pulse-ring: ts-pulse-ring 2800ms var(--ease-in-out-soft) infinite;
+  --animate-shimmer: ts-shimmer 1600ms linear infinite;
+}
+
+/* --------------------------------------------------------------------------
+   Base
+   -------------------------------------------------------------------------- */
+@layer base {
+  * {
+    border-color: var(--color-ink-200);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+  }
+
+  body {
+    background-color: var(--paper);
+    color: var(--ink-800);
+    font-family: var(--font-sans);
+    font-feature-settings: 'cv05' 1, 'ss01' 1;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    min-height: 100dvh;
+    accent-color: var(--brand-600);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    color: var(--ink-900);
+    text-wrap: balance;
+  }
+
+  /* Headlines are optically tightened as they grow, not uniformly tracked. */
+  /* Fraunces carries three expressive axes. Headings stay settled
+     (SOFT 0, WONK 0); the largest display sizes open up so the letterforms
+     read as drawn rather than defaulted. */
+  h1,
+  h2 {
+    letter-spacing: -0.028em;
+    font-variation-settings: 'opsz' 72, 'SOFT' 0, 'WONK' 0;
+  }
+
+  h3,
+  h4 {
+    font-variation-settings: 'opsz' 24, 'SOFT' 0, 'WONK' 0;
+  }
+
+  /* Tracking tightens as letters grow — the single biggest tell between
+     typeset and defaulted headings. */
+  .text-display-2xl {
+    letter-spacing: -0.044em;
+  }
+
+  .text-display-xl {
+    letter-spacing: -0.036em;
+  }
+
+  .text-display-lg {
+    letter-spacing: -0.029em;
+  }
+
+  .text-display {
+    letter-spacing: -0.022em;
+  }
+
+  .text-display-sm {
+    letter-spacing: -0.018em;
+  }
+
+  /* Numerals align in tables and times without a utility class. */
+  table,
+  time {
+    font-variant-numeric: tabular-nums;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Visible, high-contrast focus for every interactive element (WCAG 2.2 AA). */
+  :focus-visible {
+    outline: 2px solid var(--brand-600);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  .dark-band :focus-visible,
+  [data-surface='ink'] :focus-visible {
+    outline-color: var(--accent-300);
+  }
+
+  ::selection {
+    background: var(--brand-200);
+    color: var(--ink-900);
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  /* Respect user motion preferences globally. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Utilities & components
+   -------------------------------------------------------------------------- */
+@layer utilities {
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  .not-sr-only-focusable:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+
+  .shell {
+    width: 100%;
+    max-width: 84rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  /* Single-measure reading column (policies, editorial pages). */
+  .shell-narrow {
+    width: 100%;
+    max-width: 56rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .shell {
+      padding-inline: 2rem;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .shell {
+      padding-inline: 3rem;
+    }
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  /*
+   * Secondary meta text: labels, units, timestamps, helper lines.
+   *
+   * One class, two surfaces. A single mid grey cannot satisfy 4.5:1 against
+   * both bone paper and near-black ink, so the tone flips with the surface it
+   * sits on rather than being picked per component.
+   */
+  .meta {
+    color: var(--ink-600);
+  }
+
+  [data-surface='ink'] .meta,
+  .dark-band .meta {
+    color: var(--ink-400);
+  }
+
+  /* Numbered section kicker: 03 · COMMITTEES */
+  .eyebrow-num {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.6rem;
+  }
+
+  .eyebrow-num::before {
+    content: attr(data-index);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: 0.1em;
+    color: var(--accent-500);
+    font-weight: 600;
+  }
+
+  /* Trident rule — three converging prongs resolving into a hairline. Used as
+     section ornament instead of a gradient wash or a stock photograph. */
+  .rule-trident {
+    position: relative;
+    display: block;
+    height: 10px;
+    width: 100%;
+  }
+
+  .rule-trident::before,
+  .rule-trident::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    height: 10px;
+    width: 8px;
+    border-top: 1px solid var(--accent-400);
+    transform: skewX(-34deg);
+  }
+
+  .rule-trident::before {
+    left: 0;
+  }
+
+  .rule-trident::after {
+    left: 0.65rem;
+  }
+
+  .rule-trident > span {
+    position: absolute;
+    left: 1.6rem;
+    right: 0;
+    top: 0;
+    height: 1px;
+    transform-origin: left;
+    background: linear-gradient(90deg, var(--accent-400), color-mix(in oklab, var(--ink-900) 16%, transparent));
+  }
+
+  [data-surface='ink'] .rule-trident > span {
+    background: linear-gradient(90deg, var(--accent-400), rgb(255 255 255 / 0.16));
+  }
+
+  /* Unmistakable-but-subtle placeholder treatment for missing information.
+     Tokens wrap rather than forcing intrinsic width: an unbreakable token
+     inside a grid or flex track inflates the track past the viewport and
+     produces horizontal scroll on phones. Information must never be clipped
+     and layout must never overflow. */
+  .tbd {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    letter-spacing: 0.01em;
+    color: var(--warning-700);
+    background: var(--warning-50);
+    border-bottom: 1px dashed var(--warning-500);
+    padding: 0.05em 0.3em;
+    border-radius: 3px;
+    white-space: normal;
+    overflow-wrap: break-word;
+    text-decoration: none;
+    text-transform: none;
+  }
+
+  [data-surface='ink'] .tbd {
+    color: var(--accent-300);
+    background: rgb(213 169 76 / 0.12);
+    border-bottom-color: rgb(213 169 76 / 0.5);
+  }
+
+  .hairline {
+    border: 1px solid color-mix(in oklab, var(--ink-900) 12%, transparent);
+  }
+
+  .hairline-strong {
+    border: 1px solid color-mix(in oklab, var(--ink-900) 22%, transparent);
+  }
+
+  .rule-accent {
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent-400), transparent);
+  }
+
+  /* Very subtle paper grain — gives large flat areas an editorial feel. */
+  .texture-grain {
+    position: relative;
+  }
+
+  .texture-grain::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .texture-grid {
+    background-image:
+      linear-gradient(to right, color-mix(in oklab, var(--ink-900) 6%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in oklab, var(--ink-900) 6%, transparent) 1px, transparent 1px);
+    background-size: 5rem 5rem;
+  }
+
+  .texture-meridian {
+    background-image: radial-gradient(
+      circle at 50% 120%,
+      color-mix(in oklab, var(--brand-600) 10%, transparent) 0%,
+      transparent 60%
+    );
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+      opacity var(--dur-4) var(--ease-out-expo),
+      transform var(--dur-4) var(--ease-out-expo),
+      clip-path var(--dur-5) var(--ease-out-expo);
+    will-change: opacity, transform;
+  }
+
+  .reveal[data-visible='true'] {
+    opacity: 1;
+    transform: none;
+    clip-path: none;
+  }
+
+  /* Masked wipe — for editorial leads and image plates. */
+  .reveal[data-reveal-variant='mask'] {
+    transform: none;
+    clip-path: inset(0 0 100% 0);
+    transition:
+      clip-path var(--dur-5) var(--ease-out-expo),
+      opacity var(--dur-3) linear;
+  }
+
+  .reveal[data-reveal-variant='mask'][data-visible='true'] {
+    clip-path: inset(0 0 0 0);
+  }
+
+  /* Lateral entry — for split layouts and side panels. */
+  .reveal[data-reveal-variant='left'] {
+    transform: translateX(-22px);
+  }
+
+  /* Settle — for cards; a short rise with a whisper of scale. */
+  .reveal[data-reveal-variant='scale'] {
+    transform: translateY(10px) scale(0.972);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      opacity: 1;
+      transform: none;
+      clip-path: none;
+      transition-delay: 0ms !important;
+    }
+  }
+
+  /* ---- Surfaces -------------------------------------------------------- */
+
+  /* Deep editorial band: cool ink, a brand-lit corner, a warm horizon and a
+     vignette, so dark sections read as lit space rather than flat black. */
+  .ink-canvas {
+    position: relative;
+    background-color: var(--ink-950);
+    background-image:
+      radial-gradient(120% 82% at 10% -12%, color-mix(in oklab, var(--brand-600) 46%, transparent) 0%, transparent 58%),
+      radial-gradient(72% 60% at 97% 106%, color-mix(in oklab, var(--accent-500) 26%, transparent) 0%, transparent 62%),
+      linear-gradient(180deg, var(--ink-950) 0%, #06060a 100%);
+  }
+
+  .ink-canvas::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(95% 72% at 50% 38%, transparent 38%, rgb(0 0 0 / 0.42) 100%);
+  }
+
+  /* 1px light top edge: separates stacked dark planes without a border. */
+  .bevel-top {
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.08);
+  }
+
+  .glass-panel {
+    background: rgb(255 255 255 / 0.045);
+    border: 1px solid rgb(255 255 255 / 0.1);
+    backdrop-filter: blur(12px) saturate(140%);
+    box-shadow: var(--shadow-inset-hair);
+  }
+
+  .texture-hatch {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      color-mix(in oklab, var(--ink-900) 7%, transparent) 0 1px,
+      transparent 1px 9px
+    );
+  }
+
+  .texture-meridian-deep {
+    background-image:
+      radial-gradient(circle at 50% 130%, color-mix(in oklab, var(--brand-600) 15%, transparent) 0%, transparent 58%),
+      radial-gradient(circle at 6% -18%, color-mix(in oklab, var(--accent-400) 13%, transparent) 0%, transparent 46%);
+  }
+
+  .grain-dark::after {
+    opacity: 0.055;
+    mix-blend-mode: screen;
+  }
+
+  /* ---- Interaction ----------------------------------------------------- */
+
+  .lift {
+    transition:
+      transform var(--dur-3) var(--ease-out-expo),
+      box-shadow var(--dur-3) var(--ease-out-expo),
+      border-color var(--dur-2) linear;
+  }
+
+  .lift:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-float);
+  }
+
+  /* One light sweep on hover, once — never a loop, never on load. */
+  .sheen {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .sheen::after {
+    content: '';
+    position: absolute;
+    inset: -30% -10%;
+    pointer-events: none;
+    background: linear-gradient(104deg, transparent 38%, rgb(255 255 255 / 0.16) 50%, transparent 62%);
+    transform: translateX(-130%);
+    transition: transform var(--dur-5) var(--ease-out-expo);
+  }
+
+  .sheen:hover::after,
+  .sheen:focus-visible::after {
+    transform: translateX(130%);
+  }
+
+  .press:active {
+    transform: translateY(1px) scale(0.994);
+  }
+
+  /* Corner brackets — implies a framed plate on feature panels. */
+  .framed {
+    position: relative;
+  }
+
+  .framed::before,
+  .framed::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-color: var(--accent-400);
+    opacity: 0.7;
+    transition:
+      opacity var(--dur-3) var(--ease-out-expo),
+      width var(--dur-3) var(--ease-out-expo),
+      height var(--dur-3) var(--ease-out-expo);
+  }
+
+  .framed::before {
+    top: 0;
+    left: 0;
+    border-top: 1px solid;
+    border-left: 1px solid;
+  }
+
+  .framed::after {
+    bottom: 0;
+    right: 0;
+    border-bottom: 1px solid;
+    border-right: 1px solid;
+  }
+
+  .framed:hover::before,
+  .framed:hover::after {
+    width: 24px;
+    height: 24px;
+    opacity: 1;
+  }
+
+  /* Reading-progress rule driven by a single custom property. */
+  .scroll-progress {
+    transform-origin: left center;
+    transform: scaleX(var(--scroll-progress, 0));
+    transition: transform 90ms linear;
+  }
+
+  /* ---- Type ------------------------------------------------------------ */
+
+  .lead {
+    font-size: var(--text-lead);
+    line-height: 1.55;
+    text-wrap: pretty;
+  }
+
+  /* Display type at its most characterful: high optical size and WONK 1 give
+     the quirky terminals that no default serif has. Used for the wordmark and
+     for editorial pull quotes only. */
+  .wordmark {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-variation-settings: 'opsz' 144, 'SOFT' 24, 'WONK' 1;
+    line-height: 0.88;
+    letter-spacing: -0.032em;
+    text-transform: uppercase;
+  }
+
+  .display-italic {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-variation-settings: 'opsz' 96, 'SOFT' 40, 'WONK' 1;
+  }
+
+  /* Oversized editorial numeral used as a list marker. */
+  .index-numeral {
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 72, 'SOFT' 0, 'WONK' 0;
+    font-size: 2.25rem;
+    line-height: 0.9;
+    font-weight: 400;
+    /* Recessive but legible: the numeral orders the row without competing
+       with the heading beside it. */
+    color: color-mix(in oklab, var(--ink-900) 34%, transparent);
+    transition: color var(--dur-3) var(--ease-out-expo);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* A rule that behaves like a printed hairline rather than a UI border. */
+  .rule-thin {
+    height: 1px;
+    background: color-mix(in oklab, var(--ink-900) 14%, transparent);
+  }
+
+  /* Masthead / dateline strip: small-caps meta over a heavier value, divided by
+     hairlines. The publication device this whole identity is built around. */
+  .masthead {
+    display: grid;
+    border-block: 1px solid color-mix(in oklab, var(--ink-900) 12%, transparent);
+  }
+
+  .masthead-cell {
+    padding: 1rem 1.25rem;
+    border-top: 1px solid color-mix(in oklab, var(--ink-900) 8%, transparent);
+  }
+
+  .masthead-cell:first-child {
+    border-top: 0;
+  }
+
+  @media (min-width: 640px) {
+    .masthead {
+      grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    }
+
+    .masthead-cell {
+      border-top: 0;
+      border-left: 1px solid color-mix(in oklab, var(--ink-900) 8%, transparent);
+    }
+
+    .masthead-cell:first-child {
+      border-left: 0;
+    }
+  }
+
+  [data-surface='ink'] .masthead {
+    border-color: rgb(255 255 255 / 0.14);
+  }
+
+  [data-surface='ink'] .masthead-cell {
+    border-color: rgb(255 255 255 / 0.1);
+  }
+
+  /* Pointer spotlight: one radial highlight that follows the cursor across a
+     dark band. Driven by two custom properties, so nothing re-renders. */
+  .spotlight {
+    isolation: isolate;
+  }
+
+  /* Painted behind the band's own content, above its background. */
+  .spotlight::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity var(--dur-4) var(--ease-out-expo);
+    background: radial-gradient(
+      26rem 26rem at var(--mx, 50%) var(--my, 0%),
+      color-mix(in oklab, var(--accent-400) 16%, transparent) 0%,
+      transparent 70%
+    );
+  }
+
+  .spotlight:hover::after,
+  .spotlight[data-active='true']::after {
+    opacity: 1;
+  }
+
+  /* Editorial row: hairline-separated, with a brass marker that grows on hover. */
+  .editorial-row {
+    position: relative;
+    transition: background-color var(--dur-3) var(--ease-out-expo);
+  }
+
+  .editorial-row::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--accent-400);
+    transform: scaleY(0);
+    transform-origin: top center;
+    transition: transform var(--dur-3) var(--ease-out-expo);
+  }
+
+  .editorial-row:hover::before,
+  .editorial-row:focus-within::before {
+    transform: scaleY(1);
+  }
+
+  .prose-editorial,
+  .measure {
+    max-width: 68ch;
+  }
+
+  /* Brass underline that draws itself once, on entry. */
+  .underline-brass {
+    position: relative;
+    display: inline-block;
+  }
+
+  .underline-brass::after {
+    content: '';
+    position: absolute;
+    left: 0.03em;
+    right: 0.03em;
+    bottom: 0.07em;
+    height: 0.04em;
+    background: var(--accent-400);
+    transform: scaleX(0);
+    transform-origin: left center;
+    animation: ts-rule-draw 1100ms var(--ease-out-expo) 320ms both;
+  }
+
+  .dropcap::first-letter {
+    float: left;
+    font-family: var(--font-display);
+    font-size: 3.4em;
+    line-height: 0.82;
+    padding-right: 0.1em;
+    padding-top: 0.04em;
+    color: var(--brand-700);
+  }
+
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.55), transparent);
+    animation: var(--animate-shimmer);
+  }
+
+  .link-underline {
+    position: relative;
+    text-decoration: none;
+  }
+
+  .link-underline::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.32s var(--ease-out-quint);
+  }
+
+  .link-underline:hover::after,
+  .link-underline:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  .prose-editorial {
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    color: var(--ink-700);
+  }
+
+  .prose-editorial > * + * {
+    margin-top: 1.15em;
+  }
+
+  .prose-editorial h2 {
+    font-size: var(--text-display-sm);
+    margin-top: 2.2em;
+  }
+
+  .prose-editorial h3 {
+    font-size: 1.375rem;
+    margin-top: 1.8em;
+  }
+
+  .prose-editorial ul,
+  .prose-editorial ol {
+    padding-left: 1.35em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+  }
+
+  .prose-editorial ul {
+    list-style: none;
+  }
+
+  .prose-editorial ul > li::before {
+    content: '—';
+    color: var(--accent-500);
+    margin-right: 0.5em;
+    margin-left: -1.35em;
+  }
+
+  .prose-editorial ol {
+    list-style: decimal;
+  }
+
+  .prose-editorial a {
+    color: var(--brand-700);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .prose-editorial strong {
+    color: var(--ink-900);
+  }
+
+  .prose-editorial blockquote {
+    border-left: 2px solid var(--accent-400);
+    padding-left: 1.15rem;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    color: var(--ink-800);
+  }
+
+  .table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* ==========================================================================
+   MOTION LAYER — depth, 3D surfaces, kinetic type, scroll-driven scenes
+   ==========================================================================
+   Everything here is transform/opacity only, driven by CSS custom properties
+   that a single shared rAF loop writes. No animation library, no per-frame
+   React renders, and every effect is inert under prefers-reduced-motion.
+   ========================================================================== */
+@layer components {
+  /* ---- Scroll parallax ------------------------------------------------- */
+  /* `--parallax` is written by the scroll engine in px; the element only
+     ever composites a translate, so it stays on the GPU. */
+  .parallax {
+    transform: translate3d(0, var(--parallax, 0px), 0);
+    will-change: transform;
+  }
+
+  /* ---- Scroll scene ---------------------------------------------------- */
+  /* Exposes 0→1 traversal progress as `--p` for descendants to consume. */
+  .scene {
+    --p: 0;
+  }
+
+  /* A stroke that draws itself with scroll position instead of on entry.
+     `pathLength=1` on the SVG path makes the dash arithmetic exact. */
+  .scrub-draw > * {
+    stroke-dasharray: 1;
+    stroke-dashoffset: calc(1 - var(--p, 0));
+  }
+
+  /* ---- 3D surfaces ----------------------------------------------------- */
+  /* Perspective lives on the frame so the tilted plane inside it has real
+     depth; children carrying `translateZ` then genuinely sit above it. */
+  .tilt-frame {
+    perspective: 1100px;
+    perspective-origin: 50% 50%;
+  }
+
+  .tilt {
+    transform: translate3d(0, 0, var(--dz, 0px)) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    transform-style: preserve-3d;
+    transition: transform 620ms var(--ease-out-expo);
+    will-change: transform;
+  }
+
+  /* While the pointer is inside, the plane should follow it instantly;
+     releasing it settles back over the slow curve above. */
+  .tilt[data-tilting] {
+    transition: transform 70ms linear;
+  }
+
+  .tilt-layer {
+    transform: translateZ(var(--z, 22px));
+  }
+
+  /* Cursor-tracked light on a raised plane. Soft-light keeps it reading as
+     illumination rather than as a shine. */
+  .tilt-glare {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--dur-3) var(--ease-out-expo);
+    background: radial-gradient(
+      16rem 16rem at var(--tx, 50%) var(--ty, 50%),
+      rgb(255 255 255 / 0.42) 0%,
+      transparent 64%
+    );
+    mix-blend-mode: soft-light;
+  }
+
+  .tilt[data-tilting] .tilt-glare {
+    opacity: 1;
+  }
+
+  [data-surface='ink'] .tilt-glare {
+    background: radial-gradient(
+      16rem 16rem at var(--tx, 50%) var(--ty, 50%),
+      color-mix(in oklab, var(--accent-300) 34%, transparent) 0%,
+      transparent 66%
+    );
+    mix-blend-mode: screen;
+  }
+
+  /* ---- Kinetic type ---------------------------------------------------- */
+  /* Each word rises out of its own clipping mask. The mask carries matching
+     padding so descenders are never cut off. */
+  .kinetic-mask {
+    display: inline-block;
+    overflow: hidden;
+    padding-bottom: 0.16em;
+    margin-bottom: -0.16em;
+    vertical-align: bottom;
+  }
+
+  .kinetic-word {
+    display: inline-block;
+    transform: translate3d(0, 108%, 0) rotate(1.4deg);
+    opacity: 0;
+    transition:
+      transform 1050ms var(--ease-out-expo),
+      opacity 620ms var(--ease-in-out-soft);
+    will-change: transform, opacity;
+  }
+
+  .kinetic[data-visible='true'] .kinetic-word {
+    transform: none;
+    opacity: 1;
+  }
+
+  /* ---- Ticker ---------------------------------------------------------- */
+  /* Not a carousel: nothing is hidden, nothing auto-advances a slide, and
+     pausing requires only hovering. It is a printed strip that happens to
+     move. */
+  .ticker {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ticker-track {
+    display: flex;
+    width: max-content;
+    animation: ts-marquee var(--ticker-duration, 52s) linear infinite;
+  }
+
+  .ticker:hover .ticker-track,
+  .ticker:focus-within .ticker-track {
+    animation-play-state: paused;
+  }
+
+  .ticker-fade::before,
+  .ticker-fade::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 4rem;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .ticker-fade::before {
+    left: 0;
+    background: linear-gradient(90deg, var(--ticker-fade, var(--paper-sunk)), transparent);
+  }
+
+  .ticker-fade::after {
+    right: 0;
+    background: linear-gradient(270deg, var(--ticker-fade, var(--paper-sunk)), transparent);
+  }
+
+  [data-surface='ink'] .ticker-fade {
+    --ticker-fade: var(--ink-950);
+  }
+
+  .ticker-sep {
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    flex: none;
+    rotate: 45deg;
+    background: var(--accent-400);
+    opacity: 0.75;
+  }
+
+  /* ---- Section figure -------------------------------------------------- */
+  /* An outlined numeral used as engraved page furniture — graphic weight
+     without a decorative image. Purely presentational, so it never carries
+     information and is hidden from assistive tech. */
+  .section-figure {
+    position: absolute;
+    z-index: -1;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(6.5rem, 17vw, 15rem);
+    line-height: 0.76;
+    letter-spacing: -0.05em;
+    font-variation-settings: 'opsz' 144, 'SOFT' 0, 'WONK' 0;
+    color: transparent;
+    -webkit-text-stroke: 1px color-mix(in oklab, var(--ink-900) 13%, transparent);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  [data-surface='ink'] .section-figure {
+    -webkit-text-stroke-color: rgb(255 255 255 / 0.15);
+  }
+
+  .section-figure-solid {
+    color: color-mix(in oklab, var(--ink-900) 6%, transparent);
+    -webkit-text-stroke-width: 0;
+  }
+
+  /* ---- Armillary globe ------------------------------------------------- */
+  /* A wireframe meridian sphere built entirely from CSS 3D transforms: six
+     meridians, an equator, two tropics and one tilted ecliptic carrying a
+     brass node. Deliberately a drafting instrument, not a 3D blob. */
+  .armillary {
+    position: relative;
+    width: var(--size, 20rem);
+    height: var(--size, 20rem);
+    perspective: 1000px;
+    perspective-origin: 50% 46%;
+  }
+
+  .armillary-stage,
+  .armillary-nod {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+  }
+
+  .armillary-stage {
+    animation: ts-armillary-spin 68s linear infinite;
+  }
+
+  .armillary-nod {
+    animation: ts-armillary-nod 24s var(--ease-in-out-soft) infinite alternate;
+  }
+
+  .armillary-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1px solid rgb(255 255 255 / 0.13);
+    transform-style: preserve-3d;
+  }
+
+  .armillary-ring-soft {
+    border-color: rgb(255 255 255 / 0.07);
+  }
+
+  .armillary-ring-accent {
+    border-color: color-mix(in oklab, var(--accent-400) 44%, transparent);
+  }
+
+  .armillary-node {
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    width: 5px;
+    height: 5px;
+    margin: -2.5px 0 0 -2.5px;
+    border-radius: 50%;
+    background: var(--accent-300);
+    box-shadow: 0 0 10px color-mix(in oklab, var(--accent-400) 65%, transparent);
+  }
+
+  .armillary-axis {
+    position: absolute;
+    left: 50%;
+    top: -5%;
+    bottom: -5%;
+    width: 1px;
+    margin-left: -0.5px;
+    background: linear-gradient(180deg, transparent, rgb(255 255 255 / 0.18), transparent);
+  }
+
+  .armillary-halo {
+    position: absolute;
+    inset: -22%;
+    border-radius: 50%;
+    pointer-events: none;
+    background: radial-gradient(
+      circle at 50% 44%,
+      color-mix(in oklab, var(--brand-500) 30%, transparent) 0%,
+      transparent 62%
+    );
+  }
+
+  .armillary-base {
+    position: absolute;
+    left: 50%;
+    bottom: -7%;
+    width: 52%;
+    height: 10px;
+    translate: -50% 0;
+    border-radius: 50%;
+    border: 1px solid rgb(255 255 255 / 0.12);
+    background: radial-gradient(
+      ellipse at 50% 50%,
+      color-mix(in oklab, var(--accent-400) 22%, transparent) 0%,
+      transparent 72%
+    );
+  }
+
+  /* ---- Native scroll-driven scenes (progressive enhancement) ----------- */
+  /* Where the browser supports view timelines the reveal is handed to the
+     compositor instead of JS. Elsewhere the IntersectionObserver fallback in
+     <Reveal> handles it, so nothing is ever missing. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .figure-scroll {
+        animation: ts-figure-drift linear both;
+        animation-timeline: view();
+        animation-range: cover 0% cover 100%;
+      }
+
+      .rule-scroll {
+        animation: ts-rule-draw linear both;
+        animation-timeline: view();
+        animation-range: entry 10% cover 34%;
+      }
+    }
+  }
+}
+
+/* Keyframes used sparingly: dialog entry, toast entry, indeterminate bar. */
+@keyframes ts-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes ts-scale-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes ts-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes ts-indeterminate {
+  0% {
+    transform: translateX(-100%) scaleX(0.4);
+  }
+  100% {
+    transform: translateX(100%) scaleX(0.9);
+  }
+}
+
+.animate-fade-in {
+  animation: ts-fade-in 0.18s var(--ease-in-out-soft) both;
+}
+
+.animate-scale-in {
+  animation: ts-scale-in 0.2s var(--ease-out-quint) both;
+}
+
+.animate-slide-up {
+  animation: ts-slide-up 0.28s var(--ease-out-quint) both;
+}
+
+.animate-indeterminate {
+  animation: ts-indeterminate 1.4s var(--ease-in-out-soft) infinite;
+}
+
+/* Slow ambient drift for the summit geometry. Long, linear, ignorable. */
+@keyframes ts-orbit {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* A rule that draws from its origin, used for accents and underlines. */
+@keyframes ts-rule-draw {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Entry rise for hero copy — one pass, then it stays put. */
+@keyframes ts-rise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Drafting draw-in. Paired with `pathLength={1}` on SVG paths, so a stroke is
+   drawn along its own length rather than fading in. */
+@keyframes ts-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-draw > * {
+  stroke-dasharray: 1;
+  animation: ts-draw 1200ms var(--ease-out-expo) both;
+}
+
+/* Expanding halo for status markers that are genuinely waiting on someone. */
+@keyframes ts-pulse-ring {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.55;
+  }
+  70% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+@keyframes ts-shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* Seamless strip: the track contains exactly two copies of its content, so a
+   −50% shift lands on an identical frame. */
+@keyframes ts-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* Armillary: one slow revolution about the polar axis, plus an independent
+   nod so the sphere never reads as a flat spinning disc. */
+@keyframes ts-armillary-spin {
+  from {
+    transform: rotateX(-16deg) rotateY(0deg);
+  }
+  to {
+    transform: rotateX(-16deg) rotateY(360deg);
+  }
+}
+
+@keyframes ts-armillary-nod {
+  from {
+    transform: rotateZ(-2.5deg) translateY(-6px);
+  }
+  to {
+    transform: rotateZ(2.5deg) translateY(8px);
+  }
+}
+
+/* Scroll-scrubbed drift for engraved section numerals. */
+@keyframes ts-figure-drift {
+  from {
+    transform: translate3d(0, 3.5rem, 0);
+  }
+  to {
+    transform: translate3d(0, -3.5rem, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-orbit,
+  .animate-orbit-reverse,
+  .animate-pulse-ring,
+  .animate-rise,
+  .animate-rule-draw,
+  .underline-brass::after,
+  .shimmer::after,
+  .animate-draw > *,
+  .armillary-stage,
+  .armillary-nod,
+  .ticker-track,
+  .figure-scroll,
+  .rule-scroll {
+    animation: none !important;
+  }
+
+  .animate-draw > * {
+    stroke-dasharray: none;
+  }
+
+  /* Nothing should be left mid-state: depth, kinetic masks and scrubbed
+     strokes all resolve to their finished position. */
+  .parallax,
+  .tilt,
+  .tilt-layer,
+  .kinetic-word {
+    transform: none !important;
+    will-change: auto;
+  }
+
+  .kinetic-word {
+    opacity: 1 !important;
+    transition: none !important;
+  }
+
+  .scrub-draw > * {
+    stroke-dashoffset: 0 !important;
+  }
+}
+
+/* Print: participant artefacts stay legible on paper. */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
+}
